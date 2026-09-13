@@ -1,0 +1,23 @@
+# Normalize every text file to LF in the repo and on checkout (Windows teammates included).
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Binary assets.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.pdf   binary
+*.zip   binary
+*.woff  binary
+*.woff2 binary
+
+# Generated lockfiles: collapse in GitHub diffs.
+uv.lock         linguist-generated=true
+pnpm-lock.yaml  linguist-generated=true

@@ -1,0 +1,15 @@
+# Link checker config (https://lychee.cli.rs). Used by .github/workflows/links.yml.
+cache = true
+max_cache_age = "1d"
+max_concurrency = 8
+max_retries = 2
+timeout = 20
+accept = ["200..=299", "429"]
+exclude_all_private = true
+exclude_path = ["node_modules", ".venv", "CHANGELOG.md"]
+exclude = [
+  # Pages that need a login or don't exist until the repo is pushed/configured.
+  '^https://chatgpt\.com/',
+  '^https://github\.com/UniverseScripts/regional-codex/security/',
+  '^https?://localhost',
+]

@@ -1,0 +1,113 @@
+# Git hooks for every contributor (humans, Claude Code, Codex).
+# Install once: `uv run pre-commit install` (installs pre-commit, commit-msg and pre-push hooks).
+# Compatible with `prek` as a drop-in runner. Dependabot keeps the revs current.
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+default_stages: [pre-commit]
+default_language_version:
+  python: python3.12
+minimum_pre_commit_version: "4.0.0"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: detect-private-key
+      - id: check-executables-have-shebangs
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.7
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.12.13
+    hooks:
+      - id: uv-lock
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
+    rev: v1.7.12.24
+    hooks:
+      - id: actionlint
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.30.1
+    hooks:
+      - id: zizmor
+        args: [--no-progress, --offline]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.0
+    hooks:
+      - id: check-github-workflows
+      - id: check-dependabot
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (strict)
+        entry: uv run --frozen mypy
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
+        require_serial: true
+
+      # Uses the Biome pinned in package.json (run `pnpm install` once); no separate Node env.
+      - id: biome-check
+        name: biome check
+        entry: pnpm exec biome check --write --files-ignore-unknown=true --no-errors-on-unmatched
+        language: system
+        types_or: [javascript, jsx, ts, tsx, json, css]
+        require_serial: true
+
+      - id: check-commit-msg
+        name: reject AI attribution in commit messages
+        entry: uv run --no-project python scripts/check_commit_msg.py
+        language: system
+        stages: [commit-msg]
+
+      - id: deny-agent-push
+        name: refuse pushes from Claude Code sessions
+        entry: uv run --no-project python scripts/deny_agent_push.py
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+
+      - id: poe-check
+        name: quality gate (uv run poe check)
+        entry: uv run --frozen poe check
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+        require_serial: true

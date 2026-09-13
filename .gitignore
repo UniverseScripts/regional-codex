@@ -1,0 +1,49 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+junit.xml
+
+# --- Node / TypeScript ---
+node_modules/
+.pnpm-store/
+.next/
+.turbo/
+out/
+coverage/
+*.tsbuildinfo
+
+# --- Secrets & local env ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Agent tooling (local-only state) ---
+.claude/settings.local.json
+.claude/state/
+.codex/*.local.toml
+
+# --- Tool caches ---
+.lycheecache
+
+# --- Editors / OS ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db

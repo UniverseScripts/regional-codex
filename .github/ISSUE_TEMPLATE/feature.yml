@@ -1,0 +1,23 @@
+name: Feature / slice
+description: A capability or vertical slice to build
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / user value
+      description: Who is this for and why does it matter?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance test
+      description: One observable behaviour that proves this slice works.
+    validations:
+      required: true
+  - type: textarea
+    id: codex
+    attributes:
+      label: Codex plan
+      description: How will Codex help (cloud task, CLI pairing, review)?

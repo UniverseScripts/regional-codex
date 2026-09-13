@@ -1,0 +1,14 @@
+# Project-scoped Codex config. Codex loads it only after you trust this project.
+# Rules live in AGENTS.md; this file sets safe defaults and the quality-gate hook.
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+# Stop hook: when a turn changed files, run the fast quality gate (lint, format, types) before
+# Codex finishes. On failure the report goes to stderr with exit code 2, so Codex continues and
+# fixes it. The hook fails open with a warning if the gate cannot run (for example, uv missing).
+# Same script as Claude Code's Stop hook. Full tests run on pre-push and in CI.
+[[hooks.Stop]]
+hooks = [
+  { type = "command", command = 'uv run --no-project python "$(git rev-parse --show-toplevel)/.claude/hooks/stop_gate.py" --mode fast', timeout = 600, statusMessage = "Running quality gate (fast)" },
+]

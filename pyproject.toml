@@ -1,0 +1,136 @@
+[project]
+name = "regional-codex"
+version = "0.0.0"
+description = "Sea x OpenAI Regional Codex Hackathon (Vietnam) team monorepo. Pre-event tooling baseline; product code is built on D-Day."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+# Virtual workspace root: nothing to build or install here.
+# On D-Day, `uv init --package services/<name>` adds the [tool.uv.workspace] table automatically.
+[tool.uv]
+package = false
+
+# --------------------------------------------------------------------------- ruff
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [".claude/state"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W", "F", "I", "B", "UP", "SIM", "S", "C4", "PT", "RUF", "ASYNC", "N", "PTH", "TRY", "PL",
+]
+ignore = [
+  "E501",    # line length is owned by the formatter
+  "TRY003",  # descriptive exception messages are fine
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tooling shells out to git/uv/pnpm by design.
+"scripts/**" = ["S603", "S607"]
+".claude/hooks/**" = ["S603", "S607", "PLR0913"]  # hook mains take injectable streams/env
+".claude/hooks/guard_bash.py" = ["S105"]  # `token == "--flag"` comparisons are not secrets
+"tests/**" = ["S101", "S603", "S607", "PLR2004", "PLC0415"]
+# Product code (created on D-Day) keeps security rules but drops complexity noise from AI SDKs.
+"services/**" = ["PLR0913", "PLR2004"]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+  "_common", "guard_bash", "guard_files", "post_edit", "session_context", "stop_gate",
+  "gate", "check_commit_msg", "deny_agent_push", "helpers",
+]
+
+# --------------------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["scripts", ".claude/hooks", "tests"]
+mypy_path = ["scripts", ".claude/hooks", "tests"]
+explicit_package_bases = true
+warn_unreachable = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+pretty = true
+
+[[tool.mypy.overrides]]
+module = ["services.*"]
+ignore_missing_imports = true
+disallow_untyped_calls = false
+
+# --------------------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+testpaths = ["tests"]
+pythonpath = [".claude/hooks", "scripts", "tests"]
+xfail_strict = true
+filterwarnings = ["error"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+# --------------------------------------------------------------------------- coverage
+# Enforced only by `scripts/gate.py --ci` (which adds --cov); plain `pytest` stays fast.
+[tool.coverage.run]
+branch = true
+source = [".claude/hooks", "scripts"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+exclude_also = [
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+]
+
+# --------------------------------------------------------------------------- codespell
+[tool.codespell]
+skip = "uv.lock,pnpm-lock.yaml,*.svg,.venv,node_modules"
+check-hidden = true
+
+# --------------------------------------------------------------------------- tasks
+[tool.poe.tasks.fmt]
+help = "Format and apply safe lint fixes"
+sequence = [
+  { cmd = "ruff format ." },
+  { cmd = "ruff check --fix --unfixable F401,F841 ." },
+]
+
+[tool.poe.tasks.lint]
+help = "Lint (no fixes)"
+cmd = "ruff check ."
+
+[tool.poe.tasks.typecheck]
+help = "mypy --strict"
+cmd = "mypy"
+
+[tool.poe.tasks.test]
+help = "Run pytest"
+cmd = "pytest"
+
+[tool.poe.tasks.check]
+help = "Full quality gate (Definition of Done)"
+cmd = "python scripts/gate.py"
+
+[tool.poe.tasks.check-fast]
+help = "Quality gate without tests"
+cmd = "python scripts/gate.py --fast"
+
+[tool.poe.tasks.check-ci]
+help = "CI gate: no autofix, coverage enforced"
+cmd = "python scripts/gate.py --ci"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "poethepoet>=0.48.0",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=7.1.0",
+    "pytest-xdist>=3.8.0",
+    "pyyaml>=6.0.3",
+    "ruff>=0.16.7",
+    "types-pyyaml>=6.0.12.20260906",
+]

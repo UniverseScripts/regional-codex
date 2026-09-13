@@ -1,0 +1,19 @@
+{
+  "name": "regional-codex",
+  "private": true,
+  "description": "Web/TypeScript side of the Regional Codex monorepo. Dormant until apps/* exists.",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "biome ci .",
+    "format": "biome check --write .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.13"
+  }
+}
