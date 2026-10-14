@@ -5,8 +5,31 @@ repo. `CLAUDE.md` imports this file. Keep it under 32 KiB (Codex's `project_doc_
 
 ## Mission
 
-> **Filled in on D-Day (31 Oct 2026).** Problem, target users, solution, build direction
-> (Autonomous & Adaptive AI · AI-Native Products & Operations · Deep Domain AI) and demo script.
+**Alodi** (working name ExceptionPilot until 13 Oct 2026) — failed-delivery rescue for Vietnamese
+e-commerce. Briefs live in `planning/` (workspace, outside this repo); team decisions in GitHub
+issues #15–#20.
+
+- **Build direction:** Autonomous & Adaptive AI.
+- **Problem:** when a delivery fails, the context that would fix it — "after five tomorrow", "leave
+  it with security in tower B", "call my wife" — is lost in a phone call and reduced to a reason
+  code. Shopee does not let buyers choose a delivery time (Help Center art. 79559); the carrier
+  contacts the buyer 2–3 times and may reschedule within 5 days (art. 79569), all outside the system.
+  Each failure that ends in a return costs the seller up to 40,000 VND (Return & Refund Policy §7.1).
+- **Users:** depot dispatchers / CS and couriers (primary); sellers and buyers benefit.
+- **Flow:** courier taps one button (No answer · Rescheduled · Refused) → agent messages the buyer →
+  extractor turns Vietnamese replies into `{time_window, drop_location, alt_receiver,
+  address_correction}` with per-field confidence → **policy guard** (rules, not prompts) auto-applies
+  confident low-risk fields, sends the rest to a person → versioned **Order Context Object** with
+  audit log → courier context card. Refusals go to CS with no buyer contact.
+- **D-Day core vs stretch (team to confirm):** core = chat path, extractor, policy guard, context
+  object, eval; stretch = courier voice memo via one ASR provider, AI voice call.
+- **Out of scope:** rebuilding dispatch or route planning; real Zalo/SIP/carrier integrations.
+- **Evidence rule:** extraction F1 and safe-autonomy figures are reported only from the held-out eval
+  run on the day, with model, prompt and dataset version. Money figures are always "projected".
+  The demo site (alodiagent.vercel.app) is a pre-event design prototype; D-Day code is written fresh.
+  If any pre-built code or recording is reused on stage, list it in `DECLARATION.md`.
+
+> **This section is the plan, not permission to build.** Product code still starts on D-Day.
 
 ## Hackathon constraints
 
