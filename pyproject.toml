@@ -11,7 +11,9 @@ dependencies = []
 [tool.uv]
 package = false
 # virtualenv < 21.7.13: GHSA-94p9-xgh2-xp45, -9h9j-4vrj-gf7g, -p58f-9548-mpm2, -x78j-v8h9-3j2q
-constraint-dependencies = ["virtualenv>=21.7.13"]
+# virtualenv < 21.14.9: GHSA-cx28-75q4-x26q, -394h-qwmc-48pf
+# filelock < 4.2.1: GHSA-v4x8-3wr5-3wq8, -9vhv-jxww-xfm5, -567q-5qvw-pf92
+constraint-dependencies = ["virtualenv>=21.14.9", "filelock>=4.2.1"]
 
 # --------------------------------------------------------------------------- ruff
 [tool.ruff]
